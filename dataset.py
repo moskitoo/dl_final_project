@@ -8,7 +8,7 @@ import gzip
 import cv2
 import re
 import glob
-from torchvision.transforms.v2 import v2
+from torchvision.transforms import v2
 
 
 class BrightfieldMicroscopyDataset(Dataset):
