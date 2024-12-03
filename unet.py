@@ -28,7 +28,6 @@ class UNet(nn.Module):
         self.dec_conv2 = nn.Conv2d(128, 64, 3, padding=1)
         self.upsample3 = nn.Upsample(128)  # 64 -> 128
         self.dec_conv3 = nn.Conv2d(128, 1, 3, padding=1)
-
     def forward(self, x):
         # Encoder
         e0_skip = F.relu(self.enc_conv0(x))  # (batch_size, 64, 512, 512)
@@ -56,9 +55,7 @@ class UNet(nn.Module):
         d3 = torch.cat([e0_skip, F.interpolate(d2, size=e0_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
         d3 = self.dec_conv3(d3)  # (batch_size, 1, 512, 512)
 
-        # Upsample final output to match input size
-        output = F.interpolate(d3, size=x.shape[2:], mode='bilinear', align_corners=False)  # Match label size (1024, 1024)
+        # **Resize final output to match input size (1024x1024)**:
+        output = F.interpolate(d3, size=x.shape[2:], mode='bilinear', align_corners=False)  # Match size of labels
 
         return output
-
-
