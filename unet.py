@@ -31,25 +31,30 @@ class UNet(nn.Module):
 
     def forward(self, x):
         # Encoder
-        e0_skip = F.relu(self.enc_conv0(x))
-        e0 = self.pool0(e0_skip)
-        e1_skip = F.relu(self.enc_conv1(e0))
-        e1 = self.pool1(e1_skip)
-        e2_skip = F.relu(self.enc_conv2(e1))
-        e2 = self.pool2(e2_skip)
-        e3_skip = F.relu(self.enc_conv3(e2))
-        e3 = self.pool3(e3_skip)
+        e0_skip = F.relu(self.enc_conv0(x))  # (batch_size, 64, 512, 512)
+        e0 = self.pool0(e0_skip)            # (batch_size, 64, 256, 256)
+        e1_skip = F.relu(self.enc_conv1(e0))  # (batch_size, 64, 256, 256)
+        e1 = self.pool1(e1_skip)            # (batch_size, 64, 128, 128)
+        e2_skip = F.relu(self.enc_conv2(e1))  # (batch_size, 64, 128, 128)
+        e2 = self.pool2(e2_skip)            # (batch_size, 64, 64, 64)
+        e3_skip = F.relu(self.enc_conv3(e2))  # (batch_size, 64, 64, 64)
+        e3 = self.pool3(e3_skip)            # (batch_size, 64, 32, 32)
 
         # Bottleneck
-        b = F.relu(self.bottleneck_conv(e3))
-        b = torch.cat([e3_skip, self.upsample0(b)], 1)
+        b = F.relu(self.bottleneck_conv(e3))  # (batch_size, 64, 32, 32)
 
         # Decoder
-        d0 = F.relu(self.dec_conv0(b))
-        d0 = torch.cat([e2_skip, self.upsample1(d0)], 1)
-        d1 = F.relu(self.dec_conv1(d0))
-        d1 = torch.cat([e1_skip, self.upsample2(d1)], 1)
-        d2 = F.relu(self.dec_conv2(d1))
-        d2 = torch.cat([e0_skip, self.upsample3(d2)], 1)
-        d3 = self.dec_conv3(d2)  # No activation
+        d0 = torch.cat([e3_skip, F.interpolate(b, size=e3_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
+        d0 = F.relu(self.dec_conv0(d0))  # (batch_size, 64, 64, 64)
+
+        d1 = torch.cat([e2_skip, F.interpolate(d0, size=e2_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
+        d1 = F.relu(self.dec_conv1(d1))  # (batch_size, 64, 128, 128)
+
+        d2 = torch.cat([e1_skip, F.interpolate(d1, size=e1_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
+        d2 = F.relu(self.dec_conv2(d2))  # (batch_size, 64, 256, 256)
+
+        d3 = torch.cat([e0_skip, F.interpolate(d2, size=e0_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
+        d3 = self.dec_conv3(d3)  # (batch_size, 1, 512, 512)
+
         return d3
+
