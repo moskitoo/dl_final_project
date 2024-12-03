@@ -7,7 +7,7 @@ class UNet(nn.Module):
         super().__init__()
 
         # Encoder (downsampling)
-        self.enc_conv0 = nn.Conv2d(3, 64, 3, padding=1)
+        self.enc_conv0 = nn.Conv2d(11, 64, 3, padding=1)  # Changed from 3 to 11
         self.pool0 = nn.MaxPool2d(2, 2)  # 128 -> 64
         self.enc_conv1 = nn.Conv2d(64, 64, 3, padding=1)
         self.pool1 = nn.MaxPool2d(2, 2)  # 64 -> 32
