@@ -14,7 +14,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 BATCH_SIZE = 8
 LEARNING_RATE = 1e-4
-EPOCHS = 25
+EPOCHS = 10
 
 train_transform = v2.Compose([
     v2.ToDtype(torch.float32, scale=True),
@@ -51,12 +51,12 @@ model = UNet()
 model = model.cuda()
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-
-# Training and Validation Loop
 for epoch in range(EPOCHS):
     model.train()
     train_loss = 0
-    for images, labels in train_loader:
+    print(f"Epoch {epoch+1}/{EPOCHS}")
+    
+    for batch_idx, (images, labels) in enumerate(train_loader):
         images, labels = images.cuda(), labels.cuda()
         optimizer.zero_grad()
         outputs = model(images)
@@ -64,21 +64,26 @@ for epoch in range(EPOCHS):
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
+        
+        print(f"Batch {batch_idx+1}/{len(train_loader)}, Batch Loss: {loss.item():.4f}", flush=True)
     
     train_loss /= len(train_loader)
-    print(f"Epoch {epoch+1}/{EPOCHS}, Training Loss: {train_loss:.4f}")
+    print(f"Epoch {epoch+1}/{EPOCHS}, Training Loss: {train_loss:.4f}", flush=True)
     
-    # Validation
     model.eval()
     val_loss = 0
     with torch.no_grad():
-        for images, labels in val_loader:
+        for batch_idx, (images, labels) in enumerate(val_loader):
             images, labels = images.cuda(), labels.cuda()
             outputs = model(images)
             loss = criterion(outputs, labels.unsqueeze(1).float())
             val_loss += loss.item()
+            
+            print(f"Validation Batch {batch_idx+1}/{len(val_loader)}, Batch Loss: {loss.item():.4f}", flush=True)
+    
     val_loss /= len(val_loader)
-    print(f"Epoch {epoch+1}/{EPOCHS}, Validation Loss: {val_loss:.4f}")
+    print(f"Epoch {epoch+1}/{EPOCHS}, Validation Loss: {val_loss:.4f}", flush=True)
+
 
 # Save the model
 # torch.save(model.state_dict(), MODEL_SAVE_PATH)
