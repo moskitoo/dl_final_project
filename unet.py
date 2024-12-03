@@ -7,7 +7,7 @@ class UNet(nn.Module):
         super().__init__()
 
         # Encoder (downsampling)
-        self.enc_conv0 = nn.Conv2d(11, 64, 3, padding=1)  # Changed from 3 to 11
+        self.enc_conv0 = nn.Conv2d(11, 64, 3, padding=1) 
         self.pool0 = nn.MaxPool2d(2, 2)  # 128 -> 64
         self.enc_conv1 = nn.Conv2d(64, 64, 3, padding=1)
         self.pool1 = nn.MaxPool2d(2, 2)  # 64 -> 32
@@ -56,11 +56,7 @@ class UNet(nn.Module):
         d3 = self.dec_conv3(d3)  # (batch_size, 1, 512, 512)
 
         # Ensure final output matches input size (1024, 1024)
-        output = F.interpolate(d3, size=(1024, 1024), mode='bilinear', align_corners=False)  # Explicitly set the size
-
-        print("Input size:", x.shape)
-        print("Output size before resizing:", d3.shape)
-        print("Output size after resizing:", output.shape)
+        output = F.interpolate(d3, size=(1024, 1024), mode='bilinear', align_corners=False)  
 
         return output
 
