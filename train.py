@@ -46,7 +46,6 @@ val_dataset = BrightfieldMicroscopyDataset(
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-# Model, Loss, and Optimizer
 model = UNet()
 model = model.cuda()
 criterion = nn.BCEWithLogitsLoss()
