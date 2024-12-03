@@ -19,7 +19,7 @@ EPOCHS = 10
 train_transform = v2.Compose([
     v2.ToDtype(torch.float32, scale=True),
     v2.Resize(512),
-    v2.RandomHorizontalFlip(p=0.5),
+    # v2.RandomHorizontalFlip(p=0.5),
 ])
 
 val_transform = v2.Compose([
