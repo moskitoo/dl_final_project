@@ -55,7 +55,12 @@ class UNet(nn.Module):
         d3 = torch.cat([e0_skip, F.interpolate(d2, size=e0_skip.shape[2:], mode='bilinear', align_corners=False)], 1)
         d3 = self.dec_conv3(d3)  # (batch_size, 1, 512, 512)
 
-        # **Resize final output to match input size (1024x1024)**:
-        output = F.interpolate(d3, size=x.shape[2:], mode='bilinear', align_corners=False)  # Match size of labels
+        # Ensure final output matches input size (1024, 1024)
+        output = F.interpolate(d3, size=(1024, 1024), mode='bilinear', align_corners=False)  # Explicitly set the size
+
+        print("Input size:", x.shape)
+        print("Output size before resizing:", d3.shape)
+        print("Output size after resizing:", output.shape)
 
         return output
+
