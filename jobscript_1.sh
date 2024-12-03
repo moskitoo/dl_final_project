@@ -14,7 +14,7 @@
 #BSUB -n 4 
 #BSUB -R "span[hosts=1]"
 ### -------------specify CPU memory requirements ----------------
-#BSUB -R "rusage[mem=32GB]"
+#BSUB -R "rusage[mem=20GB]"
 ### -------------specify wall-clock time (max allowed is 12:00)----------------
 #BSUB -W 12:00
 #BSUB -o /zhome/68/f/213210/deep_learning_final_project/output_logs/%J.out
