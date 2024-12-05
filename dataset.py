@@ -3,13 +3,10 @@ import numpy as np
 import os
 from torch.utils.data import Dataset
 from PIL import Image
-import pickle
-import gzip
-import cv2
 import re
 import glob
-from torchvision.transforms.v2 import v2
-
+from torchvision.transforms import v2
+from torchvision import tv_tensors
 
 class BrightfieldMicroscopyDataset(Dataset):
     '''
@@ -27,7 +24,7 @@ class BrightfieldMicroscopyDataset(Dataset):
 
         transform = v2.Compose([v2.ToDtype(torch.float32, scale=True),
                                 v2.Resize(512)
-                                2.RandomHorizontalFlip(p=0.5)])
+                                v2.RandomHorizontalFlip(p=0.5)])
 
     You can also choose your favourite random seed and how many data points you'd like to use for validation.
 
@@ -120,11 +117,13 @@ class BrightfieldMicroscopyDataset(Dataset):
         label = Image.open(label[0])
         label = np.array(label)
 
-        if not images.any() or not label.any():
-            raise RuntimeError(f"Missing images or labels for index {idx}. Images: {images}, Label: {label}")
+        #if not images.any() or not label.any():
+        #    raise RuntimeError(f"Missing images or labels for index {idx}. Images: {images}, Label: {label}")
 
         images = torch.from_numpy(images)
         label = torch.from_numpy(label)
+        label = label == 255
+        label = tv_tensors.Mask(label)
 
         if self.transform:
             images, label = self.transform(images, label)
