@@ -24,4 +24,4 @@
 source ~/pytorch_env/bin/activate  # Adjust the virtual environment path if necessary
 
 # Run the training script
-python3 /zhome/68/f/213210/deep_learning_final_project/dl_final_project/train.py
+python3 /zhome/68/f/213210/deep_learning_final_project/dl_final_project/standard_deviation_mean.py

@@ -27,8 +27,8 @@ logging.basicConfig(
 
 # Hyperparameters
 BATCH_SIZE = 8
-LEARNING_RATE = 1e-4
-EPOCHS = 10
+LEARNING_RATE = 1e-3
+EPOCHS = 20
 
 # Transforms
 train_transform = v2.Compose([
