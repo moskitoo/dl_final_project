@@ -12,8 +12,8 @@ from evaluation_metrics import specificity, sensitivity, accuracy, intersection_
 
 DATA_ROOT = "/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data"  
 LOG_DIR = "/zhome/68/f/213210/deep_learning_final_project/output_logs"    
-MODEL_SAVE_PATH = "/zhome/68/f/213210/deep_learning_final_project/models/unet_model_6_1155.pth" 
-LOG_FILE = os.path.join(LOG_DIR, "training_log_with_metrics_6_1155.log")
+MODEL_SAVE_PATH = "/zhome/68/f/213210/deep_learning_final_project/models/unet_model_6_1255.pth" 
+LOG_FILE = os.path.join(LOG_DIR, "training_log_with_metrics_6_1255.log")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 
@@ -27,8 +27,8 @@ logging.basicConfig(
 
 # Hyperparameters
 BATCH_SIZE = 8
-LEARNING_RATE = 1e-3
-EPOCHS = 20
+LEARNING_RATE = 1e-4
+EPOCHS = 100
 
 # Transforms
 train_transform = v2.Compose([
