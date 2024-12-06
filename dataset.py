@@ -114,7 +114,6 @@ class BrightfieldMicroscopyDataset(Dataset):
     
     def __getitem__(self, idx):
         images, label = self.data[idx]
-
         images = [np.array(Image.open(f)) for f in images]
         images = np.stack(images, axis=0)
         label = Image.open(label[0])
@@ -123,13 +122,19 @@ class BrightfieldMicroscopyDataset(Dataset):
         # if not images.any() or not label.any():
         #     raise RuntimeError(f"Missing images or labels for index {idx}. Images: {images}, Label: {label}")
 
-        if not images.any():  
-            raise RuntimeError(f"Missing images for index {idx}. Images: {images}") 
+        if not images.any():
+            raise RuntimeError(f"Missing images for index {idx}. Images: {images}")
+
+        label = label / 255.0
 
         images = torch.from_numpy(images)
         label = torch.from_numpy(label)
 
         if self.transform:
             images, label = self.transform(images, label)
-        
+
         return images, label
+
+    
+
+
