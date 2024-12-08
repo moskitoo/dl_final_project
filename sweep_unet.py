@@ -84,8 +84,8 @@ def build_dataset_segmentation(batch_size, image_size, random_rotation_degrees, 
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
     mask_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/masks'
 
-    image_root = 'data/brightfield'
-    mask_root = 'data/masks'
+    # image_root = 'data/brightfield'
+    # mask_root = 'data/masks'
 
     transform_train = v2.Compose([
         v2.Resize((image_size, image_size)),
@@ -195,4 +195,4 @@ def train(config=None):
 
 if __name__ == '__main__':
 
-    wandb.agent(sweep_id, train, count=1)
+    wandb.agent(sweep_id, train, count=100)
