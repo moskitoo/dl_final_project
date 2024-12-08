@@ -86,6 +86,9 @@ def train_model(model, train_loader, val_loader, optimiser, lr_scheduler, criter
             images, labels = data
             images, labels = images.to(device), labels.to(device)
 
+            if args.train_3d:
+                images = images.unsqueeze(1)
+
             optimiser.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels.float())

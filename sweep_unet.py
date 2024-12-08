@@ -66,7 +66,7 @@ parameters_dict = {
         # with evenly-distributed logarithms 
         'distribution': 'q_log_uniform_values',
         'q': 2,
-        'min': 2,
+        'min': 16,
         'max': 64,
       },
     'epochs': {
