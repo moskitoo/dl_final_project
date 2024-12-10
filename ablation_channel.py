@@ -19,7 +19,7 @@ import torch.optim as optim
 from torchvision.transforms import v2
 from time import time
 import wandb
-from model import BaseUnet, BaseUnet3D
+from model import BaseUnet
 from dataset import BrightfieldMicroscopyDataset
 from early_stopping import EarlyStopping
 from arguments import parse_args
@@ -31,9 +31,6 @@ def get_dataloader(sample_size, batch_size):
 
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
     mask_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/masks'
-
-    image_root = 'data/brightfield'
-    mask_root = 'data/masks'
 
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
@@ -69,7 +66,7 @@ def checkpoint_model(model, optimiser, epoch, path='model.pth'):
 def save_model(model, path='model.pth'):
     torch.save(model.state_dict(), path)
 
-def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
+def train_model(model, channels, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
     # Initialize W&B run
     wandb.init(
         project=args.project_name,         
@@ -79,6 +76,7 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             "learning_rate": optimiser.param_groups[0]['lr'],
             "batch_size": args.batch_size,
             "model_name": args.model_name,
+            "channels": channels,
         }
     )
     
@@ -92,9 +90,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             images, labels = images.to(device), labels.to(device)
 
             if args.train_3d:
-                images = images.unsqueeze(2)
-                labels = labels.unsqueeze(1)
-         
+                images = images.unsqueeze(1)
+
             optimiser.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels.float())
@@ -117,11 +114,6 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             for data in val_loader:
                 images, labels = data
                 images, labels = images.to(device), labels.to(device)
-
-                if args.train_3d:
-                    images = images.unsqueeze(2)
-                    labels = labels.unsqueeze(1)
-
                 outputs = model(images)
                 loss = criterion(outputs, labels.float())
                 val_loss += loss.item()
@@ -164,20 +156,11 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         })
         wandb.log({"Predicted segmentation": images})
 
-        # Save model checkpoint to W&B
-        # if epoch % 10 == 0:
-        #     #wandb.save('checkpoint_model_{}_{}.pth'.format(args.project_name, epoch))
-        #     checkpoint_model(model, optimiser, epoch, path='checkpoint_model_{}_{}.pth'.format(args.project_name, epoch))
-
         early_stopping(avg_val_loss, model)
 
         if early_stopping.early_stop:
             print("Early stopping")
             break
-    
-    # Save the final model and upload to W&B
-    # final_model_path = 'final_model_classification{}.pth'.format(args.model_name)
-    # save_model(model, path=final_model_path)
     
     # test the model
     model.eval()
@@ -192,11 +175,6 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         for data in test_loader:
             images, labels = data
             images, labels = images.to(device), labels.to(device)
-
-            if args.train_3d:
-                images = images.unsqueeze(2)
-                labels = labels.unsqueeze(1)
-                
             outputs = model(images)
             loss = criterion(outputs, labels.float())
             test_loss += loss.item()
@@ -226,34 +204,37 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
     # Finish the W&B run
     wandb.finish()
 
-
 if __name__ == '__main__':
 
-    args = parse_args()
+    CHANNEL_COMBINATIONS = [[0], [0,1], [0,1,2], [0,1,2,3], [0,1,2,3,4], [0,1,2,3,4,5], [0,1,2,3,4,5,6], [0,1,2,3,4,5,6,7], [0,1,2,3,4,5,6,7,8], [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10]]
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    for channels in CHANNEL_COMBINATIONS:
+        args = parse_args()
 
-    model = BaseUnet3D(num_inputs=11)
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
+        model = BaseUnet(num_inputs=11)
 
-    criterion = nn.BCEWithLogitsLoss()
+        train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
-    # Initialize optimiser and learning rate scheduler
-    if args.optimiser == 'adam':
-        optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    elif args.optimiser == 'sgd':
-        optimiser = optim.SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=args.weight_decay)
-    else:
-        raise ValueError('optimiser should be either adam or sgd')
-    
-    lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
+        criterion = nn.BCEWithLogitsLoss()
 
-    early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
+        # Initialize optimiser and learning rate scheduler
+        if args.optimiser == 'adam':
+            optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
+        elif args.optimiser == 'sgd':
+            optimiser = optim.SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=args.weight_decay)
+        else:
+            raise ValueError('optimiser should be either adam or sgd')
+        
+        lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
 
-    # Train the model
-    train_model(model, train_loader, val_loader, test_loader,
-                num_epochs=args.num_epochs, 
-                optimiser=optimiser, lr_scheduler=lr_scheduler, 
-                criterion=criterion, device=device, args=args, 
-                early_stopping=early_stopping)
+        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
+
+        # Train the model
+        train_model(model, channels,
+                    train_loader, val_loader, test_loader, 
+                    num_epochs=args.num_epochs, 
+                    optimiser=optimiser, lr_scheduler=lr_scheduler, 
+                    criterion=criterion, device=device, args=args, 
+                    early_stopping=early_stopping)

@@ -140,36 +140,35 @@ def train_epoch(network, train_loader, val_loader, optimizer, loss_fn):
         optimizer.step()
 
         # Evaluate model
-        network.eval()
-        val_loss = 0
-        dice = 0
-        iou = 0
-        acc = 0
-        sens = 0
-        spec = 0
+    network.eval()
+    val_loss = 0
+    dice = 0
+    iou = 0
+    acc = 0
+    sens = 0
+    spec = 0
 
-        with torch.no_grad():
-            for data in val_loader:
-                images, labels = data
-                images, labels = images.to(device), labels.to(device)
-                outputs = network(images)
-                loss_val = loss_fn(outputs, labels.float())
-                val_loss += loss.item()
+    with torch.no_grad():
+        for data in val_loader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = network(images)
+            loss_val = loss_fn(outputs, labels.float())
+            val_loss += loss.item()
 
-                Y_pred = (outputs > 0.45).float()
-                dice += dice_overlap(Y_pred, labels)
-                iou += intersection_over_union(Y_pred, labels)
-                acc += accuracy(Y_pred, labels)
-                sens += sensitivity(Y_pred, labels)
-                spec += specificity(Y_pred, labels)
+            Y_pred = (outputs > 0.45).float()
+            dice += dice_overlap(Y_pred, labels)
+            iou += intersection_over_union(Y_pred, labels)
+            acc += accuracy(Y_pred, labels)
+            sens += sensitivity(Y_pred, labels)
+            spec += specificity(Y_pred, labels)
             
-            dice /= len(val_loader)
-            iou /= len(val_loader)
-            acc /= len(val_loader)
-            sens /= len(val_loader)
-            spec /= len(val_loader)  
-        network.train()  
-        wandb.log({"batch loss": loss.item(), "batch loss test": loss_val.item()})
+        dice /= len(val_loader)
+        iou /= len(val_loader)
+        acc /= len(val_loader)
+        sens /= len(val_loader)
+        spec /= len(val_loader)  
+    network.train()  
     return (cumu_loss / len(train_loader)), (val_loss / len(val_loader)), acc, dice
 
 LOSS_FN = nn.BCEWithLogitsLoss()
