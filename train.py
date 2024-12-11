@@ -38,7 +38,7 @@ def get_dataloader(sample_size, batch_size):
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
         v2.RandomRotation(degrees=15),
-        v2.RandomHorizontalFlip(p=0.5),
+        v2.RandomHorizontalFlip(p=0.3),
         v2.ToDtype(torch.float32, scale=True),
         v2.ToTensor(),
     ])
@@ -233,7 +233,7 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet(num_inputs=11)
+    model = BaseUnet3D(num_inputs=11)
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
