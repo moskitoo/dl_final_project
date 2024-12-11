@@ -269,7 +269,7 @@ def fft_segmentation(
     )
     metrics = calculate_segmentation_metrics(processed_image, label.numpy())
     return processed_image, processed_channels, label, metrics
-def perform_segmentation_evaluation(dataloader, print_interval=20, save_images=False, target_dir='data_processed'):
+def perform_segmentation_evaluation(dataloader, print_interval=20, save_images=False, target_dir='data_processed', single_channel_target_dir='data_processed'):
     all_metrics = {
         "pixel_accuracy": [],
         "iou": [],
@@ -331,11 +331,11 @@ def perform_segmentation_evaluation(dataloader, print_interval=20, save_images=F
                 image.save(path)
             
             # Save postprocessed image
-            full_save_dir = os.path.dirname(target_dir + paths[i][0].split('z')[0][4:])
+            full_save_dir = os.path.dirname(single_channel_target_dir + paths[i][0].split('z')[0][4:])
             os.makedirs(full_save_dir, exist_ok=True)
             
             image = Image.fromarray(postprocessed_image)
-            path = target_dir + paths[i][0].split('z')[0][4:]
+            path = single_channel_target_dir + paths[i][0].split('z')[0][4:]
             image.save(f"{path}.tif")
 
         # Calculate metrics for this batch
