@@ -37,8 +37,8 @@ def get_dataloader(sample_size, batch_size):
 
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
-        v2.RandomRotation(degrees=0),
-        v2.RandomHorizontalFlip(p=0.0),
+        v2.RandomRotation(degrees=15),
+        v2.RandomHorizontalFlip(p=0.5),
         v2.ToDtype(torch.float32, scale=True),
         v2.ToTensor(),
     ])
@@ -196,7 +196,7 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             if args.train_3d:
                 images = images.unsqueeze(2)
                 labels = labels.unsqueeze(1)
-                
+
             outputs = model(images)
             loss = criterion(outputs, labels.float())
             test_loss += loss.item()

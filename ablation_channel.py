@@ -69,7 +69,7 @@ def save_model(model, path='model.pth'):
 def train_model(model, channels, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
     # Initialize W&B run
     wandb.init(
-        project=args.project_name,         
+        project='Ablation Channel Base Unet',         
         entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
         config={
             "epochs": num_epochs,
@@ -229,7 +229,7 @@ if __name__ == '__main__':
         
         lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
 
-        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
+        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format('ablation_channel_base_unet'))
 
         # Train the model
         train_model(model, channels,
