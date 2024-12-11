@@ -3,3 +3,4 @@ forcebiology
 data_exploration.ipynb
 __pycache__
 /pdfs
+/data_processed

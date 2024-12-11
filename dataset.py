@@ -113,9 +113,9 @@ class BrightfieldMicroscopyDataset(Dataset):
         return len(self.data) 
     
     def __getitem__(self, idx):
-        images, label = self.data[idx]
+        images_paths, label = self.data[idx]
 
-        images = [np.array(Image.open(f)) for f in images]
+        images = [np.array(Image.open(f)) for f in images_paths]
         images = np.stack(images, axis=0)
         label = Image.open(label[0])
         label = np.array(label)
@@ -129,4 +129,4 @@ class BrightfieldMicroscopyDataset(Dataset):
         if self.transform:
             images, label = self.transform(images, label)
         
-        return images, label
+        return images, label, images_paths
