@@ -24,16 +24,18 @@ from dataset import BrightfieldMicroscopyDataset
 from early_stopping import EarlyStopping
 from arguments import parse_args
 from evaluation_metrics import dice_overlap, intersection_over_union, accuracy, sensitivity, specificity
+from loss import dice_loss, weighted_bce_loss, focal_loss
 
 wandb.login(key=os.environ.get('WANDB_API_KEY'))
+
 
 def get_dataloader(sample_size, batch_size):
 
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
     mask_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/masks'
 
-    # image_root = 'data/brightfield'
-    # mask_root = 'data/masks'
+    image_root = 'data/brightfield'
+    mask_root = 'data/masks'
 
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
@@ -237,7 +239,7 @@ if __name__ == '__main__':
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = dice_loss
 
     # Initialize optimiser and learning rate scheduler
     if args.optimiser == 'adam':

@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument('--patience', type=int, default=40, help='number of classes')
     parser.add_argument('--delta', type=int, default=0.1, help='number of classes')
     parser.add_argument('--lr_scheduler', type=bool, default=False, help='number of classes')
-    parser.add_argument('--train_3d', type=bool, default=True, help='number of classes')
+    parser.add_argument('--train_3d', type=bool, default=False, help='number of classes')
     
     parser.add_argument('-f')
     

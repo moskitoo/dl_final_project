@@ -117,7 +117,8 @@ class BrightfieldMicroscopyDataset(Dataset):
         label = Image.open(label[0])
         label = np.array(label)
 
-        #if not images.any() or not label.any():
+        # if not images.any() or not label.any():
+        #     raise RuntimeWarning(f"Missing images or labels for index {idx}. Images: {path_images}, Label: {path_label}")
         #    raise RuntimeError(f"Missing images or labels for index {idx}. Images: {images}, Label: {label}")
 
         images = torch.from_numpy(images)
