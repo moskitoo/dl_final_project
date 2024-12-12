@@ -22,7 +22,7 @@ import wandb
 from model import BaseUnet, BaseUnet3D
 from dataset import BrightfieldMicroscopyDataset
 from early_stopping import EarlyStopping
-from arguments import parse_args
+from arguments import parse_args_3dunet
 from evaluation_metrics import dice_overlap, intersection_over_union, accuracy, sensitivity, specificity
 from loss import dice_loss, weighted_bce_loss, focal_loss
 from data_processing_tools import remove_repeating_pattern
@@ -35,8 +35,8 @@ def get_dataloader(sample_size, batch_size):
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
     mask_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/masks'
 
-    image_root = 'data/brightfield'
-    mask_root = 'data/masks'
+    # image_root = 'data/brightfield'
+    # mask_root = 'data/masks'
 
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
@@ -236,32 +236,34 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 
 if __name__ == '__main__':
+        
+    for loss_fn in [nn.BCEWithLogitsLoss, dice_loss, focal_loss]:
 
-    args = parse_args()
+        args = parse_args_3dunet()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet3D(num_inputs=11)
+        model = BaseUnet3D(num_inputs=11)
 
-    train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
+        train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
-    criterion = dice_loss
+        criterion = loss_fn
 
-    # Initialize optimiser and learning rate scheduler
-    if args.optimiser == 'adam':
-        optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    elif args.optimiser == 'sgd':
-        optimiser = optim.SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=args.weight_decay)
-    else:
-        raise ValueError('optimiser should be either adam or sgd')
-    
-    lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
+        # Initialize optimiser and learning rate scheduler
+        if args.optimiser == 'adam':
+            optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
+        elif args.optimiser == 'sgd':
+            optimiser = optim.SGD(model.parameters(), lr=args.learning_rate, momentum=args.momentum, weight_decay=args.weight_decay)
+        else:
+            raise ValueError('optimiser should be either adam or sgd')
+        
+        lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
 
-    early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
+        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
 
-    # Train the model
-    train_model(model, train_loader, val_loader, test_loader,
-                num_epochs=args.num_epochs, 
-                optimiser=optimiser, lr_scheduler=lr_scheduler, 
-                criterion=criterion, device=device, args=args, 
-                early_stopping=early_stopping)
+        # Train the model
+        train_model(model, train_loader, val_loader, test_loader,
+                    num_epochs=args.num_epochs, 
+                    optimiser=optimiser, lr_scheduler=lr_scheduler, 
+                    criterion=criterion, device=device, args=args, 
+                    early_stopping=early_stopping)

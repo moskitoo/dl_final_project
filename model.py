@@ -112,11 +112,11 @@ class BaseUnet3D(nn.Module):
         self.downconv1 = nn.Conv3d(32, 32, 3, stride=2, padding=1, dilation=1)
         self.batchnorm1 = nn.BatchNorm3d(32)
 
-        self.enc_conv2 = nn.Conv3d(32, 64, 3, padding=1)  
-        self.downconv2 = nn.Conv3d(64, 64, 3, stride=2, padding=1, dilation=1)
-        self.batchnorm2 = nn.BatchNorm3d(64)
+        self.enc_conv2 = nn.Conv3d(32, 32, 3, padding=1)  
+        self.downconv2 = nn.Conv3d(32, 32, 3, stride=2, padding=1, dilation=1)
+        self.batchnorm2 = nn.BatchNorm3d(32)
 
-        self.enc_conv3 = nn.Conv3d(64, 64, 3, padding=1)  
+        self.enc_conv3 = nn.Conv3d(32, 64, 3, padding=1)  
         self.downconv3 = nn.Conv3d(64, 64, 3, stride=2, padding=1, dilation=1)
         self.batchnorm3 = nn.BatchNorm3d(64)
 
@@ -129,11 +129,11 @@ class BaseUnet3D(nn.Module):
         self.batchnorm4 = nn.BatchNorm3d(32)
 
         self.upconv1 = nn.ConvTranspose3d(32, 32, [3, 2, 2], stride=2, padding=[1, 0, 0], output_padding=0, dilation=1)
-        self.dec_conv1 = nn.Conv3d(64, 16, 3, padding=1)
-        self.batchnorm5 = nn.BatchNorm3d(16)
+        self.dec_conv1 = nn.Conv3d(64, 32, 3, padding=1)
+        self.batchnorm5 = nn.BatchNorm3d(32)
 
-        self.upconv2 = nn.ConvTranspose3d(16, 16, [3, 2, 2], stride=2, padding=[1, 0, 0], output_padding=0, dilation=1)
-        self.dec_conv2 = nn.Conv3d(32, 16, 3, padding=1) 
+        self.upconv2 = nn.ConvTranspose3d(32, 32, [3, 2, 2], stride=2, padding=[1, 0, 0], output_padding=0, dilation=1)
+        self.dec_conv2 = nn.Conv3d(64, 16, 3, padding=1) 
         self.batchnorm6 = nn.BatchNorm3d(16)
 
         self.upconv3 = nn.ConvTranspose3d(16, 16, [3, 2, 2], stride=2, padding=[1, 0, 0], output_padding=0, dilation=1)
@@ -156,12 +156,12 @@ class BaseUnet3D(nn.Module):
 
         # bottleneck
         b = F.relu(self.bottleneck_conv(e3))
-        print(f'e0.skip.shape: {e0_skip.shape}')
-        print(f'e1.skip.shape: {e1_skip.shape}')
-        print(f'e2.skip.shape: {e2_skip.shape}')
-        print(f'e3.skip.shape: {e3_skip.shape}')
-        print(f'b.shape: {b.shape}')
-        print(f'b.shape: {self.upconv0(b).shape}')
+        # print(f'e0.skip.shape: {e0_skip.shape}')
+        # print(f'e1.skip.shape: {e1_skip.shape}')
+        # print(f'e2.skip.shape: {e2_skip.shape}')
+        # print(f'e3.skip.shape: {e3_skip.shape}')
+        # print(f'b.shape: {b.shape}')
+        # print(f'b.shape: {self.upconv0(b).shape}')
         b = torch.cat([e3_skip, self.upconv0(b)], 1)
 
         # decoder
