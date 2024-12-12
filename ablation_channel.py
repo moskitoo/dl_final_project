@@ -206,7 +206,7 @@ def train_model(model, channels, train_loader, val_loader, test_loader, optimise
 
 if __name__ == '__main__':
 
-    CHANNEL_COMBINATIONS = [[0], [0,1], [0,1,2], [0,1,2,3], [0,1,2,3,4], [0,1,2,3,4,5], [0,1,2,3,4,5,6], [0,1,2,3,4,5,6,7], [0,1,2,3,4,5,6,7,8], [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10]]
+    CHANNEL_COMBINATIONS = [[0,1,2,3,4], [0,1,2,3,4,5], [0,1,2,3,4,5,6], [0,1,2,3,4,5,6,7], [0,1,2,3,4,5,6,7,8], [0,1,2,3,4,5,6,7,8,9], [0,1,2,3,4,5,6,7,8,9,10]]
 
     for channels in CHANNEL_COMBINATIONS:
         args = parse_args()
