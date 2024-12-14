@@ -35,8 +35,8 @@ def get_dataloader(sample_size, batch_size):
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
     mask_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/masks'
 
-    image_root = 'data/brightfield'
-    mask_root = 'data/masks'
+    # image_root = 'data/brightfield'
+    # mask_root = 'data/masks'
 
     transform_train = v2.Compose([
         v2.Resize((sample_size, sample_size)),
