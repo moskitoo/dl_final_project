@@ -245,11 +245,11 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
 
-    args = parse_args()
+    args = parse_args_3dunet()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet(num_inputs=11)
+    model = BaseUnet3D(num_inputs=11)
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
