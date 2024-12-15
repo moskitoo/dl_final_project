@@ -52,9 +52,9 @@ def get_dataloader(sample_size, batch_size):
         v2.ToTensor(),
     ])
 
-    brightfield_train_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=True, transform=transform_train, channels_to_use=[0, 1])
-    brightfield_val_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=True, transform=transform_val, channels_to_use=[0, 1])
-    brightfield_test_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=False, transform=transform_val, channels_to_use=[0, 1])
+    brightfield_train_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=True, transform=transform_train)
+    brightfield_val_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=True, transform=transform_val)
+    brightfield_test_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=False, transform=transform_val)
 
     brightfield_loader_train = DataLoader(brightfield_train_datatset,  batch_size=batch_size, shuffle=True)
     brightfield_loader_val = DataLoader(brightfield_val_datatset,  batch_size=batch_size, shuffle=True)
@@ -94,8 +94,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             images, labels = data
 
             # remove repeating pattern
-            for i in range(images.shape[0]):
-                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            # for i in range(images.shape[0]):
+            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
 
             images, labels = images.to(device), labels.to(device)
 
@@ -125,8 +125,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             for data in val_loader:
                 images, labels = data
                 # remove repeating pattern
-                for i in range(images.shape[0]):
-                    images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+                # for i in range(images.shape[0]):
+                #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
                 
                 images, labels = images.to(device), labels.to(device)
 
@@ -204,8 +204,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         for data in test_loader:
             images, labels = data
             # remove repeating pattern
-            for i in range(images.shape[0]):
-                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            # for i in range(images.shape[0]):
+            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
             
             images, labels = images.to(device), labels.to(device)
 
@@ -245,11 +245,11 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
 
-    args = parse_args()
+    args = parse_args_3dunet()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet(num_inputs=2)
+    model = BaseUnet3D(num_inputs=11)
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
