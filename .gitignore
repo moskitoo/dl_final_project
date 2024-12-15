@@ -3,3 +3,4 @@ forcebiology
 data_exploration.ipynb
 __pycache__
 wandb
+early_stopping_modelUnetBase_Brightfield.pth

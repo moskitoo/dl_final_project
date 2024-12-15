@@ -94,8 +94,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             images, labels = data
 
             # remove repeating pattern
-            # for i in range(images.shape[0]):
-            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            for i in range(images.shape[0]):
+                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
 
             images, labels = images.to(device), labels.to(device)
 
@@ -125,8 +125,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             for data in val_loader:
                 images, labels = data
                 # remove repeating pattern
-                # for i in range(images.shape[0]):
-                #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+                for i in range(images.shape[0]):
+                    images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
                 
                 images, labels = images.to(device), labels.to(device)
 
@@ -204,8 +204,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         for data in test_loader:
             images, labels = data
             # remove repeating pattern
-            # for i in range(images.shape[0]):
-            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            for i in range(images.shape[0]):
+                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
             
             images, labels = images.to(device), labels.to(device)
 
@@ -245,11 +245,11 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
 
-    args = parse_args_3dunet()
+    args = parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet3D(num_inputs=11)
+    model = BaseUnet(num_inputs=11)
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
