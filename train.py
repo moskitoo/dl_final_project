@@ -52,9 +52,9 @@ def get_dataloader(sample_size, batch_size):
         v2.ToTensor(),
     ])
 
-    brightfield_train_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=True, transform=transform_train, channels_to_use=[0, 1, 2, 3, 4, 5, 6])
-    brightfield_val_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=True, transform=transform_val, channels_to_use=[0, 1, 2, 3, 4, 5, 6])
-    brightfield_test_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=False, transform=transform_val, channels_to_use=[0, 1, 2, 3, 4, 5, 6])
+    brightfield_train_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=True, transform=transform_train, channels_to_use=[0, 1])
+    brightfield_val_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=True, transform=transform_val, channels_to_use=[0, 1])
+    brightfield_test_datatset = BrightfieldMicroscopyDataset(root_dir_images=image_root, root_dir_labels=mask_root, train=False, validation=False, transform=transform_val, channels_to_use=[0, 1])
 
     brightfield_loader_train = DataLoader(brightfield_train_datatset,  batch_size=batch_size, shuffle=True)
     brightfield_loader_val = DataLoader(brightfield_val_datatset,  batch_size=batch_size, shuffle=True)
@@ -245,11 +245,11 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
 
-    args = parse_args_3dunet()
+    args = parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = BaseUnet3D(num_inputs=7)
+    model = BaseUnet(num_inputs=2)
 
     train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
@@ -265,7 +265,7 @@ if __name__ == '__main__':
     
     lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
 
-    early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.project_name))
+    early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(args.model_name))
 
     # Train the model
     train_model(model, train_loader, val_loader, test_loader,
