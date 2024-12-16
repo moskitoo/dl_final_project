@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument('--num_epochs', type=int, default=80, help='number of epochs to train the network for')
     parser.add_argument('--model_name', type=str, default='Unet_simple_11_preprocess', help='name of the model to use')
     parser.add_argument('--sample_size', type=int, default=512, help='number of classes')
-    parser.add_argument('--project_name', type=str, default='Unet_Brightfield', help='name of the project')
+    parser.add_argument('--project_name', type=str, default='Unet_Brightfield_3D_loss_abalation_v1', help='name of the project')
     parser.add_argument('--step_size', type=int, default=7, help='number of classes')
     parser.add_argument('--gamma', type=int, default=0.1, help='number of classes')
     parser.add_argument('--weight_decay', type=int, default=0.0000464, help='number of classes')
