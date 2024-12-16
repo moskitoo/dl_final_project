@@ -9,6 +9,11 @@
 ### -------------specify job name ----------------
 #BSUB -J resnet18_classification_sweep
 
+# -- Notify me by email when execution ends   --
+#BSUB -N
+# -- email address -- 
+##BSUB -u s242529@dtu.dk
+
 ### -------------specify number of cores ----------------
 #BSUB -n 4 
 #BSUB -R "span[hosts=1]"
@@ -23,7 +28,7 @@
 #BSUB -e OUTPUT_FILE%J.err
 
 # Activate the virtual environment
-source ../dl_cv/bin/activate
+source ~/pytorch_env/bin/activate
 
 # Run the training script
-python ablation_loss.py
+python /zhome/68/f/213210/deep_learning_final_project/dl_final_project/ablation_loss.py
