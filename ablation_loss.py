@@ -22,7 +22,7 @@ import wandb
 from model import BaseUnet, BaseUnet3D
 from dataset import BrightfieldMicroscopyDataset
 from early_stopping import EarlyStopping
-from arguments import parse_args_3dunet
+from arguments import parse_args_3dunet, parse_args
 from evaluation_metrics import dice_overlap, intersection_over_union, accuracy, sensitivity, specificity
 from loss import dice_loss, weighted_bce_loss, focal_loss
 from data_processing_tools import remove_repeating_pattern
@@ -248,13 +248,17 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
         
-    for loss_fn in [nn.BCEWithLogitsLoss(), dice_loss, focal_loss]:
+    for loss_fn in [nn.BCEWithLogitsLoss(), dice_loss, focal_loss, weighted_bce_loss]:
 
-        args = parse_args_3dunet()
+        # args = parse_args_3dunet()
+
+        args = parse_args()
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        model = BaseUnet3D(num_inputs=11)
+        #model = BaseUnet3D(num_inputs=11)
+
+        model = BaseUnet(num_inputs=11)
 
         train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
