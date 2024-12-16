@@ -248,7 +248,7 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
 
 if __name__ == '__main__':
         
-    for loss_fn in [focal_loss, dice_loss]:
+    for loss_fn in [focal_loss, weighted_bce_loss]:
 
         args = parse_args_3dunet()
 
