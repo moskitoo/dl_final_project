@@ -75,16 +75,17 @@ def save_model(model, path='model.pth'):
 def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
     # Initialize W&B run
     wandb.init(
-        project=args.project_name,         
-        entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
-        config={
-            "epochs": num_epochs,
-            "learning_rate": optimiser.param_groups[0]['lr'],
-            "batch_size": args.batch_size,
-            "model_name": args.model_name,
-        }
-    )
-    
+    project=args.project_name,         
+    entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
+    config={
+        "epochs": num_epochs,
+        "learning_rate": optimiser.param_groups[0]['lr'],
+        "batch_size": args.batch_size,
+        "model_name": args.model_name,
+        "loss_function": loss_fn.__class__.__name__ if isinstance(loss_fn, nn.Module) else loss_fn.__name__
+    },
+    name=f"{args.model_name}_{loss_fn.__class__.__name__ if isinstance(loss_fn, nn.Module) else loss_fn.__name__}")
+
     model.to(device)
 
     for epoch in range(num_epochs):
