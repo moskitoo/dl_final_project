@@ -22,42 +22,75 @@ def dice_loss(y_real, y_pred):
     #dice_loss = 1 - torch.mean(2*y_real*y_pred +1) / (torch.mean(y_real + y_pred)+1)
     #return dice_loss
 
-def focal_loss(y_real, y_pred):
-    """
-    Compute binary focal loss for a batch of data.
+# def focal_loss(y_real, y_pred):
+#     """
+#     Compute binary focal loss for a batch of data.
     
+#     Args:
+#         y_real (Tensor): Ground truth labels (batch_size, height, width) with values in {0, 1}.
+#         y_pred (Tensor): Predicted logits (batch_size, height, width) before applying the sigmoid activation.
+#         alpha (float): Weighting factor for class imbalance (default: 0.25).
+#         gamma (float): Focusing parameter for hard-to-classify examples (default: 2.0).
+#         eps (float): Small epsilon to avoid log(0).
+    
+#     Returns:
+#         Tensor: Scalar focal loss value.
+#     """
+#     alpha=0.25
+#     gamma=2.0
+#     eps=1e-8
+#     # Apply sigmoid to the predicted logits to get probabilities
+#     y_pred = torch.sigmoid(y_pred)
+
+#     # Flatten the tensors to handle batches
+#     y_pred = y_pred.contiguous().view(-1)
+#     y_real = y_real.contiguous().view(-1)
+
+#     # Compute the focal loss components
+#     p_t = y_real * y_pred + (1 - y_real) * (1 - y_pred)  # p_t = p when y_real == 1, and 1-p when y_real == 0
+#     alpha_t = y_real * alpha + (1 - y_real) * (1 - alpha)  # alpha_t = alpha when y_real == 1, and 1-alpha when y_real == 0
+
+#     # Focal loss with focusing parameter gamma
+#     focal_weight = alpha_t * (1 - p_t) ** gamma
+
+#     # Add a small epsilon to avoid log(0)
+#     loss = -focal_weight * torch.log(p_t + eps)
+
+#     # Return mean loss over the batch
+#     return loss.mean()
+
+def focal_loss(y_real, y_pred, alpha=0.25, gamma=2.0, eps=1e-8):
+    """
+    Binary focal loss for imbalanced datasets.
     Args:
-        y_real (Tensor): Ground truth labels (batch_size, height, width) with values in {0, 1}.
-        y_pred (Tensor): Predicted logits (batch_size, height, width) before applying the sigmoid activation.
-        alpha (float): Weighting factor for class imbalance (default: 0.25).
-        gamma (float): Focusing parameter for hard-to-classify examples (default: 2.0).
-        eps (float): Small epsilon to avoid log(0).
-    
+        y_real (Tensor): Ground truth labels (0 or 1).
+        y_pred (Tensor): Raw logits (not probabilities).
+        alpha (float): Weighting factor for class imbalance.
+        gamma (float): Focusing parameter for hard-to-classify examples.
+        eps (float): Small epsilon to avoid numerical instability.
     Returns:
-        Tensor: Scalar focal loss value.
+        Tensor: Scalar focal loss.
     """
-    alpha=0.25
-    gamma=2.0
-    eps=1e-8
-    # Apply sigmoid to the predicted logits to get probabilities
+    # Apply sigmoid to logits
     y_pred = torch.sigmoid(y_pred)
 
-    # Flatten the tensors to handle batches
+    # Flatten tensors to handle batches
     y_pred = y_pred.contiguous().view(-1)
     y_real = y_real.contiguous().view(-1)
 
-    # Compute the focal loss components
-    p_t = y_real * y_pred + (1 - y_real) * (1 - y_pred)  # p_t = p when y_real == 1, and 1-p when y_real == 0
-    alpha_t = y_real * alpha + (1 - y_real) * (1 - alpha)  # alpha_t = alpha when y_real == 1, and 1-alpha when y_real == 0
+    # Clamp p_t to avoid log(0)
+    p_t = torch.clamp(y_real * y_pred + (1 - y_real) * (1 - y_pred), min=eps, max=1.0)
+    
+    # Compute alpha_t for class weighting
+    alpha_t = y_real * alpha + (1 - y_real) * (1 - alpha)
 
-    # Focal loss with focusing parameter gamma
+    # Compute focal weight
     focal_weight = alpha_t * (1 - p_t) ** gamma
 
-    # Add a small epsilon to avoid log(0)
-    loss = -focal_weight * torch.log(p_t + eps)
-
-    # Return mean loss over the batch
+    # Compute final loss
+    loss = -focal_weight * torch.log(p_t)
     return loss.mean()
+
 
 def bce_total_variation(y_real, y_pred):
     return bce_loss(y_real, y_pred) + 0.15 * (torch.mean(torch.sigmoid(y_pred[:,:,1:,:]) - torch.sigmoid(y_pred[:,:,:-1,:])) + torch.mean(torch.sigmoid(y_pred[:,:,:,1:]) - torch.sigmoid(y_pred[:,:,:,:-1])))
