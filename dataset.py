@@ -114,14 +114,14 @@ class BrightfieldMicroscopyDataset(Dataset):
 
         path_images = images_paths
         path_label = label
-        
+
         images = [np.array(Image.open(f)) for f in images_paths]
         images = np.stack(images, axis=0)
         label = Image.open(label[0])
         label = np.array(label)
 
-        if not images.any() or not label.any():
-            raise RuntimeWarning(f"Missing images or labels for index {idx}. Images: {path_images}, Label: {path_label}")
+        # if not images.any() or not label.any():
+        #     raise RuntimeWarning(f"Missing images or labels for index {idx}. Images: {path_images}, Label: {path_label}")
         #    raise RuntimeError(f"Missing images or labels for index {idx}. Images: {images}, Label: {label}")
 
         images = torch.from_numpy(images)
