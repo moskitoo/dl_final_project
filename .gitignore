@@ -4,3 +4,10 @@ data_exploration.ipynb
 __pycache__
 wandb
 early_stopping_modelUnetBase_Brightfield.pth
+early_stopping_modelUnet_simple_11_preprocess.pth
+early_stopping_modelUnet3D_Brightfield.pth
+early_stopping_modelUnet3D_simple_11_no_preprocess.pth
+failed_segmentation_2dunet.png
+reasonable_segmentation_unet2d.png
+segmentation_metrics_accross_channels.png
+segmentation_with_and_without_preprocessing.png
