@@ -27,6 +27,8 @@ from evaluation_metrics import dice_overlap, intersection_over_union, accuracy, 
 
 wandb.login(key=os.environ.get('WANDB_API_KEY'))
 
+torch.manual_seed(276)
+
 def get_dataloader(sample_size, batch_size):
 
     image_root = '/zhome/70/5/14854/nobackup/deeplearningf24/forcebiology/data/brightfield'
@@ -69,7 +71,7 @@ def save_model(model, path='model.pth'):
 def train_model(model, channels, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
     # Initialize W&B run
     wandb.init(
-        project='Ablation Channel Base Unet',         
+        project='Ablation Channel Base Unet Report',         
         entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
         config={
             "epochs": num_epochs,
@@ -206,12 +208,20 @@ def train_model(model, channels, train_loader, val_loader, test_loader, optimise
 
 if __name__ == '__main__':
 
-    CHANNEL_COMBINATIONS = [[0,1,2,3,4],[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
+    CHANNEL_COMBINATIONS = [[0],[0,1],[0,1,2],[0,1,2,3]]
+    #CHANNEL_COMBINATIONS = [[0,1,2,3,4],[0,1,2,3,4,5],[0,1,2,3,4,5,6],[0,1,2,3,4,5,6,7]]
+    #CHANNEL_COMBINATIONS = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
+    CHANNELS = [1,2,3,4]
+    #CHANNELS = [5,6,7,8]
+    #CHANNELS = [9,10,11]
 
-    for channels in CHANNEL_COMBINATIONS:
+    for channels, channel_num in zip(CHANNEL_COMBINATIONS, CHANNELS):
         args = parse_args()
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        # set cuda deterministic
+        torch.backends.cudnn.deterministic = True
 
         model = BaseUnet(num_inputs=11)
 
@@ -229,7 +239,8 @@ if __name__ == '__main__':
         
         lr_scheduler = optim.lr_scheduler.StepLR(optimiser, step_size=args.step_size, gamma=args.gamma)
 
-        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format('ablation_channel_base_unet'))
+        model_name = 'ablation_channel_base_unet_' + str(channel_num)
+        early_stopping = EarlyStopping(patience=args.patience, delta=args.delta, verbose=False, path='early_stopping_model{}.pth'.format(model_name))
 
         # Train the model
         train_model(model, channels,
