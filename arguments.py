@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument('--weight_decay', type=int, default=0.0000464, help='number of classes')
     parser.add_argument('--momentum', type=int, default=0.9, help='number of classes')
     parser.add_argument('--optimiser', type=str, default='adam', help='number of classes')
-    parser.add_argument('--patience', type=int, default=40, help='number of classes')
+    parser.add_argument('--patience', type=int, default=10, help='number of classes')
     parser.add_argument('--delta', type=int, default=0.1, help='number of classes')
     parser.add_argument('--lr_scheduler', type=bool, default=False, help='number of classes')
     parser.add_argument('--train_3d', type=bool, default=False, help='number of classes')
