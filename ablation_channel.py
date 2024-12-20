@@ -209,11 +209,11 @@ def train_model(model, channels, train_loader, val_loader, test_loader, optimise
 if __name__ == '__main__':
 
     #CHANNEL_COMBINATIONS = [[0],[0,1],[0,1,2],[0,1,2,3]]
-    CHANNEL_COMBINATIONS = [[0,1,2,3,4],[0,1,2,3,4,5],[0,1,2,3,4,5,6],[0,1,2,3,4,5,6,7]]
-    #CHANNEL_COMBINATIONS = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
+    #CHANNEL_COMBINATIONS = [[0,1,2,3,4],[0,1,2,3,4,5],[0,1,2,3,4,5,6],[0,1,2,3,4,5,6,7]]
+    CHANNEL_COMBINATIONS = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
     #CHANNELS = [1,2,3,4]
-    CHANNELS = [5,6,7,8]
-    #CHANNELS = [9,10,11]
+    #CHANNELS = [5,6,7,8]
+    CHANNELS = [9,10,11]
 
     for channels, channel_num in zip(CHANNEL_COMBINATIONS, CHANNELS):
         args = parse_args()
