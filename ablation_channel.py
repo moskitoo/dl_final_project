@@ -208,12 +208,12 @@ def train_model(model, channels, train_loader, val_loader, test_loader, optimise
 
 if __name__ == '__main__':
 
-    #CHANNEL_COMBINATIONS = [[0],[0,1],[0,1,2],[0,1,2,3]]
+    CHANNEL_COMBINATIONS = [[0],[0,1],[0,1,2],[0,1,2,3]]
     #CHANNEL_COMBINATIONS = [[0,1,2,3,4],[0,1,2,3,4,5],[0,1,2,3,4,5,6],[0,1,2,3,4,5,6,7]]
-    CHANNEL_COMBINATIONS = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
-    #CHANNELS = [1,2,3,4]
+    #CHANNEL_COMBINATIONS = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10]]
+    CHANNELS = [1,2,3,4]
     #CHANNELS = [5,6,7,8]
-    CHANNELS = [9,10,11]
+    #CHANNELS = [9,10,11]
 
     for channels, channel_num in zip(CHANNEL_COMBINATIONS, CHANNELS):
         args = parse_args()
@@ -223,7 +223,7 @@ if __name__ == '__main__':
         # set cuda deterministic
         torch.backends.cudnn.deterministic = True
 
-        model = BaseUnet(num_inputs=11)
+        model = BaseUnet(num_inputs=channel_num)
 
         train_loader, val_loader, test_loader = get_dataloader(args.sample_size, args.batch_size)
 
