@@ -29,7 +29,7 @@ from data_processing_tools import remove_repeating_pattern
 
 wandb.login(key=os.environ.get('WANDB_API_KEY'))
 
-torch.manual_seed(276)
+#torch.manual_seed(276)
 
 def get_dataloader(sample_size, batch_size):
  
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    torch.backends.cudnn.deterministic = True
+    #torch.backends.cudnn.deterministic = True
 
     model = BaseUnet(num_inputs=11)
 
