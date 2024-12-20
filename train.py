@@ -29,7 +29,7 @@ from data_processing_tools import remove_repeating_pattern
 
 wandb.login(key=os.environ.get('WANDB_API_KEY'))
 
-#torch.manual_seed(276)
+torch.manual_seed(276)
 
 def get_dataloader(sample_size, batch_size):
  
@@ -95,8 +95,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             images, labels = data
 
             # remove repeating pattern
-            for i in range(images.shape[0]):
-                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            # for i in range(images.shape[0]):
+            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
 
             images, labels = images.to(device), labels.to(device)
 
@@ -126,8 +126,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             for data in val_loader:
                 images, labels = data
                 # remove repeating pattern
-                for i in range(images.shape[0]):
-                    images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+                # for i in range(images.shape[0]):
+                #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
                 
                 images, labels = images.to(device), labels.to(device)
 
@@ -205,8 +205,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         for data in test_loader:
             images, labels = data
             # remove repeating pattern
-            for i in range(images.shape[0]):
-                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            # for i in range(images.shape[0]):
+            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
             
             images, labels = images.to(device), labels.to(device)
 
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    #torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.deterministic = True
 
     model = BaseUnet(num_inputs=11)
 
