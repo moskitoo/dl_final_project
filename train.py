@@ -189,8 +189,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             break
     
     # Save the final model and upload to W&B
-    # final_model_path = 'final_model_classification{}.pth'.format(args.model_name)
-    # save_model(model, path=final_model_path)
+    final_model_path = 'final_model_classification{}.pth'.format(args.model_name)
+    save_model(model, path=final_model_path)
     
     # test the model
     model.eval()
