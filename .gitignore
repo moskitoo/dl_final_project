@@ -2,3 +2,16 @@ forcebiology
 /data
 data_exploration.ipynb
 __pycache__
+wandb
+failed_segmentation_2dunet.png
+reasonable_segmentation_unet2d.png
+segmentation_metrics_accross_channels.png
+segmentation_with_and_without_preprocessing.png
+ablation_loss.py
+jobscript_ablation_loss.sh
+jobscript_ablation.sh
+jobscript_sweep_unet_3d.sh
+jobscript_sweep_unet.sh
+jobscript_train_unet.sh
+sweep_unet_3d.py 
+sweep_unet.py
