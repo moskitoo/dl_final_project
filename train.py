@@ -75,16 +75,16 @@ def save_model(model, path='model.pth'):
 
 def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_scheduler, criterion, device, args, early_stopping, num_epochs=10):
     # Initialize W&B run
-    wandb.init(
-        project=args.project_name,         
-        entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
-        config={
-            "epochs": num_epochs,
-            "learning_rate": optimiser.param_groups[0]['lr'],
-            "batch_size": args.batch_size,
-            "model_name": args.model_name,
-        }
-    )
+    # wandb.init(
+    #     project=args.project_name,         
+    #     entity="hndrkjs-danmarks-tekniske-universitet-dtu",           
+    #     config={
+    #         "epochs": num_epochs,
+    #         "learning_rate": optimiser.param_groups[0]['lr'],
+    #         "batch_size": args.batch_size,
+    #         "model_name": args.model_name,
+    #     }
+    # )
     
     model.to(device)
 
@@ -95,8 +95,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             images, labels = data
 
             # remove repeating pattern
-            # for i in range(images.shape[0]):
-            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            for i in range(images.shape[0]):
+                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
 
             images, labels = images.to(device), labels.to(device)
 
@@ -126,8 +126,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             for data in val_loader:
                 images, labels = data
                 # remove repeating pattern
-                # for i in range(images.shape[0]):
-                #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+                for i in range(images.shape[0]):
+                    images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
                 
                 images, labels = images.to(device), labels.to(device)
 
@@ -164,18 +164,18 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
             lr_scheduler.step()
 
         # Log metrics to W&B
-        wandb.log({
-            "epoch": epoch,
-            "train_loss": avg_train_loss,
-            "val_loss": avg_val_loss,
-            "learning_rate": optimiser.param_groups[0]['lr'],
-            "Dice": dice,
-            "IoU": iou,
-            "Accuracy": acc,
-            "Sensitivity": sens,
-            "Specificity": spec
-        })
-        wandb.log({"Predicted segmentation": images})
+        # wandb.log({
+        #     "epoch": epoch,
+        #     "train_loss": avg_train_loss,
+        #     "val_loss": avg_val_loss,
+        #     "learning_rate": optimiser.param_groups[0]['lr'],
+        #     "Dice": dice,
+        #     "IoU": iou,
+        #     "Accuracy": acc,
+        #     "Sensitivity": sens,
+        #     "Specificity": spec
+        # })
+        # wandb.log({"Predicted segmentation": images})
 
         # Save model checkpoint to W&B
         # if epoch % 10 == 0:
@@ -205,8 +205,8 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         for data in test_loader:
             images, labels = data
             # remove repeating pattern
-            # for i in range(images.shape[0]):
-            #     images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
+            for i in range(images.shape[0]):
+                images[i] = torch.tensor(remove_repeating_pattern(images[i].numpy()))
             
             images, labels = images.to(device), labels.to(device)
 
@@ -231,17 +231,17 @@ def train_model(model, train_loader, val_loader, test_loader, optimiser, lr_sche
         sens /= len(test_loader)
         spec /= len(test_loader)
     
-    wandb.log({
-        "test_loss": test_loss / len(test_loader),
-        "Dice Test": dice,
-        "IoU Test": iou,
-        "Accuracy Test": acc,
-        "Sensitivity Test": sens,
-        "Specificity Test": spec
-    })
+    # wandb.log({
+    #     "test_loss": test_loss / len(test_loader),
+    #     "Dice Test": dice,
+    #     "IoU Test": iou,
+    #     "Accuracy Test": acc,
+    #     "Sensitivity Test": sens,
+    #     "Specificity Test": spec
+    # })
 
-    # Finish the W&B run
-    wandb.finish()
+    # # Finish the W&B run
+    # wandb.finish()
 
 
 if __name__ == '__main__':
