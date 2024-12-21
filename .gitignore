@@ -15,3 +15,7 @@ jobscript_sweep_unet.sh
 jobscript_train_unet.sh
 sweep_unet_3d.py 
 sweep_unet.py
+/data_processed
+/data_processed_single_channel
+/report_images
+/pdfs
